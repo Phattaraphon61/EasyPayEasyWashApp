@@ -2,6 +2,7 @@
 
 import 'package:easypayeasywash/home/home.dart';
 import 'package:easypayeasywash/login/login.dart';
+import 'package:easypayeasywash/menu/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
@@ -25,7 +26,7 @@ class _SplashState extends State<Splash> {
         );
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => Home(userData: userData)),
+            MaterialPageRoute(builder: (context) => Menu(userData: userData)),
             (route) => false);
       }
       if (permissions == null) {
