@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, unused_local_variable, unused_field
 import 'package:easypayeasywash/home/home.dart';
+import 'package:easypayeasywash/menu/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
@@ -23,7 +24,7 @@ class _LoginState extends State<Login> {
       );
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => Home(userData: userData)),
+          MaterialPageRoute(builder: (context) => Menu(userData: userData)),
           (route) => false);
     } else {
       print(result.status);
