@@ -4,6 +4,7 @@ import 'package:easypayeasywash/home/home.dart';
 import 'package:easypayeasywash/login/login.dart';
 import 'package:easypayeasywash/menu/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class Splash extends StatefulWidget {
@@ -17,6 +18,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 4), () async {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       FacebookPermissions? permissions =
           await FacebookAuth.instance.permissions;
       print("uidddd...${permissions}..........");
