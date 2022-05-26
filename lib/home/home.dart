@@ -1,6 +1,13 @@
 // ignore_for_file: must_be_immutable, avoid_print, prefer_const_constructors,
 
+import 'package:easypayeasywash/addwashing/addwashing.dart';
+import 'package:easypayeasywash/withdrawal/withdrawal.dart';
+import 'package:flutter/services.dart';
+// import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key, required this.userData}) : super(key: key);
@@ -11,6 +18,40 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String _scanBarcode = 'Unknown';
+  Future<void> scanQR() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
+      print(barcodeScanRes);
+      if (barcodeScanRes != "-1") {
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.leftToRight,
+            child: Addwashing(
+              userData: widget.userData,
+              id: barcodeScanRes,
+            ),
+          ),
+        );
+      }
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -33,6 +74,49 @@ class _HomeState extends State<Home> {
                             bottomRight: const Radius.circular(48.0))),
                     height: height * 0.3,
                   ),
+                ),
+                Positioned(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Image.asset('assets/images/scan.png'),
+                        tooltip: 'scan',
+                        onPressed: () async {
+                          print('scann');
+                          scanQR();
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.notification_important),
+                        iconSize: 30,
+                        tooltip: 'scan',
+                        onPressed: () {
+                          print('noti');
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Positioned(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            right: width * 0.04, top: height * 0.013),
+                        child: Container(
+                          // ignore: unnecessary_new
+                          decoration: new BoxDecoration(
+                              color: Color.fromARGB(255, 231, 26, 26),
+                              // ignore: unnecessary_new
+                              shape: BoxShape.circle),
+                          height: 8,
+                          width: 8,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Center(
                   child: Text(
@@ -102,7 +186,7 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: EdgeInsets.only(top: height * 0.01),
                             child: Text(
-                              "1000000555",
+                             NumberFormat("#,###").format(1000000555),
                               style: TextStyle(
                                 fontSize: 14,
                               ),
@@ -120,8 +204,8 @@ class _HomeState extends State<Home> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: height * 0.01),
-                            child: Text(
-                              "3000000000000",
+                            child:  Text(
+                             NumberFormat("#,###").format(3000000000000),
                               style: TextStyle(
                                 fontSize: 14,
                               ),
@@ -136,7 +220,7 @@ class _HomeState extends State<Home> {
                   padding: EdgeInsets.only(top: height * 0.4),
                   child: Center(
                     child: Text(
-                      "จำนวนเครื่องซักผ้า",
+                      "เครื่องซักผ้าทั้งหมด",
                       style: TextStyle(
                         fontSize: 20,
                       ),
@@ -158,10 +242,8 @@ class _HomeState extends State<Home> {
                               child: ListTile(
                                 leading: Image.asset('assets/images/washing.png'),
                                 title: Text('EPEW-123456'),
-                                subtitle: Text(
-                                    'เครื่องหน้าหอ'),
+                                subtitle: Text('เครื่องหน้าหอ'),
                                 trailing: Icon(Icons.navigate_next_rounded),
-                                isThreeLine: true,
                               ),
                             ),
                           )
@@ -216,6 +298,16 @@ class _HomeState extends State<Home> {
                             icon: Image.asset('assets/images/withdrawal.png'),
                             onPressed: () {
                               print("withdrawal");
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: Withdrawal(
+                                    userData: widget.userData,
+                                    bank: "0",
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
