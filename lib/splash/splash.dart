@@ -28,7 +28,7 @@ class _SplashState extends State<Splash> {
         );
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => Menu(userData: userData)),
+            MaterialPageRoute(builder: (context) => Home(userData: userData)),
             (route) => false);
       }
       if (permissions == null) {

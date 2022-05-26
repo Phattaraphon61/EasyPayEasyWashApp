@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">easypayeasywash</string>
     <string name="facebook_app_id">588092275984136</string>
     <string name="facebook_client_token">759647aecc668bbdf6ba8fae3dc6a731</string>
+    <string name="fb_login_protocol_scheme">fb588092275984136</string>
 </resources>
