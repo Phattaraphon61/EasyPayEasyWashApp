@@ -1,11 +1,16 @@
 // ignore_for_file: must_be_immutable, avoid_print, prefer_const_constructors,
 
 import 'package:easypayeasywash/addwashing/addwashing.dart';
+import 'package:easypayeasywash/history/historywithdrawal.dart';
+import 'package:easypayeasywash/login/login.dart';
+import 'package:easypayeasywash/noti/notification.dart';
+import 'package:easypayeasywash/washinginfo/washinginfo.dart';
 import 'package:easypayeasywash/withdrawal/withdrawal.dart';
 import 'package:flutter/services.dart';
 // import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -52,6 +57,46 @@ class _HomeState extends State<Home> {
     });
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("ยกเลิก"),
+      onPressed: () {
+        Navigator.pop(context);
+        // );
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("ยืนยัน"),
+      onPressed: () async {
+        await FacebookAuth.instance.logOut();
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.bottomToTop,
+            child: Login(),
+          ),
+        );
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("ออกจากระบบ"),
+      content: Text("กรุณายืนยันเพื่อออกจากระบบ"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -93,6 +138,13 @@ class _HomeState extends State<Home> {
                         tooltip: 'scan',
                         onPressed: () {
                           print('noti');
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeft,
+                              child: MyNoti(userData: widget.userData),
+                            ),
+                          );
                         },
                       ),
                     ],
@@ -186,7 +238,7 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: EdgeInsets.only(top: height * 0.01),
                             child: Text(
-                             NumberFormat("#,###").format(1000000555),
+                              NumberFormat("#,###").format(1000000555),
                               style: TextStyle(
                                 fontSize: 14,
                               ),
@@ -204,8 +256,8 @@ class _HomeState extends State<Home> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: height * 0.01),
-                            child:  Text(
-                             NumberFormat("#,###").format(3000000000000),
+                            child: Text(
+                              NumberFormat("#,###").format(3000000000000),
                               style: TextStyle(
                                 fontSize: 14,
                               ),
@@ -230,17 +282,28 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: EdgeInsets.only(top: height * 0.45),
                   child: Container(
-                    height: height * 0.42,
+                    height: height * 0.35,
                     child: ListView(
                         scrollDirection: Axis.vertical,
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
                               print("YES");
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: WashingInfo(
+                                    userData: widget.userData,
+                                    id: 'EPEW-123456',
+                                  ),
+                                ),
+                              );
                             },
                             child: Card(
                               child: ListTile(
-                                leading: Image.asset('assets/images/washing.png'),
+                                leading:
+                                    Image.asset('assets/images/washing.png'),
                                 title: Text('EPEW-123456'),
                                 subtitle: Text('เครื่องหน้าหอ'),
                                 trailing: Icon(Icons.navigate_next_rounded),
@@ -277,6 +340,15 @@ class _HomeState extends State<Home> {
                             icon: Image.asset('assets/images/history.png'),
                             onPressed: () {
                               print("history");
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: History(
+                                    userData: widget.userData,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -327,8 +399,9 @@ class _HomeState extends State<Home> {
                           child: IconButton(
                             padding: EdgeInsets.all(0.0),
                             icon: Image.asset('assets/images/signout.png'),
-                            onPressed: () {
+                            onPressed: () async {
                               print('signout');
+                              showAlertDialog(context);
                             },
                           ),
                         ),

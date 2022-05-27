@@ -39,6 +39,7 @@ dependencies:
   page_transition: ^2.0.5
   flutter_barcode_scanner: ^2.0.0
   intl: ^0.17.0
+  art_sweetalert: ^0.0.2
   
   
 
@@ -77,6 +78,8 @@ flutter:
     - assets/images/scan.png
     - assets/images/baht.png
     - assets/images/scb.png
+    - assets/images/kbank.png
+    - assets/images/ktb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

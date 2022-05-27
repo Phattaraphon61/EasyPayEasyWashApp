@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, must_be_immutable
+
 import 'package:easypayeasywash/createbank/createbank.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -50,16 +52,17 @@ class _SelectbankState extends State<Selectbank> {
                               child: Createbank(
                                 userData: widget.userData,
                                 namebank: '0',
+                                engbank: "0",
                               ),
                             ),
                           );
                             print('back');
                           },
                         ),
-                        Text(
-                          'ย้อนกลับ',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
+                        // Text(
+                        //   'ย้อนกลับ',
+                        //   style: TextStyle(fontSize: 20, color: Colors.white),
+                        // ),
                       ],
                     ),
                   ),
@@ -74,7 +77,7 @@ class _SelectbankState extends State<Selectbank> {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(top: 2),
                     child: GestureDetector(
                       onTap: () {
                         print("YES");
@@ -84,7 +87,8 @@ class _SelectbankState extends State<Selectbank> {
                             type: PageTransitionType.leftToRight,
                             child: Createbank(
                               userData: widget.userData,
-                              namebank: "scb",
+                              engbank: "scb",
+                              namebank: "ธนาคารไทยพาณิชย์",
                             ),
                           ),
                         );
@@ -93,6 +97,57 @@ class _SelectbankState extends State<Selectbank> {
                         child: ListTile(
                           leading: Image.asset('assets/images/scb.png'),
                           title: Text('ธนาคารไทยพาณิชย์'),
+                          // subtitle: Text('เครื่องหน้าหอ'),
+                        ),
+                      ),
+                    ),
+                  ),
+                   Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("YES");
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.leftToRight,
+                            child: Createbank(
+                              userData: widget.userData,
+                              engbank: "kbank",
+                              namebank: "ธนาคารกสิกรไทย",
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        child: ListTile(
+                          leading: Image.asset('assets/images/kbank.png'),
+                          title: Text('ธนาคารกสิกรไทย'),
+                          // subtitle: Text('เครื่องหน้าหอ'),
+                        ),
+                      ),
+                    ),
+                  ), Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("YES");
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.leftToRight,
+                            child: Createbank(
+                              userData: widget.userData,
+                              engbank: "ktb",
+                              namebank: "ธนาคารกรุงไทย",
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        child: ListTile(
+                          leading: Image.asset('assets/images/ktb.png'),
+                          title: Text('ธนาคารกรุงไทย'),
                           // subtitle: Text('เครื่องหน้าหอ'),
                         ),
                       ),

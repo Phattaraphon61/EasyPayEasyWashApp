@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_constructors, must_be_immutable
+
 import 'package:easypayeasywash/createbank/createbank.dart';
 import 'package:easypayeasywash/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:intl/intl.dart';
+import 'package:art_sweetalert/art_sweetalert.dart';
 
 class Withdrawal extends StatefulWidget {
   Withdrawal({Key? key, required this.userData, required this.bank})
@@ -27,6 +30,62 @@ class _WithdrawalState extends State<Withdrawal> {
         return tt.join().toString();
       }
     }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("ยกเลิก"),
+      onPressed: () {
+        Navigator.pop(context);
+        // );
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("ยืนยัน"),
+      onPressed: () async {
+        Navigator.pop(context);
+        ArtDialogResponse response = await ArtSweetAlert.show(
+            barrierDismissible: false,
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+              // showCancelBtn: true,
+              title: "ดำเนินการเสร็จสิ้น รอระบบดำเนินการ",
+              confirmButtonText: "OK",
+            ));
+
+        if (response == null) {
+          return;
+        }
+
+        if (response.isTapConfirmButton) {
+          print(response.isTapConfirmButton);
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.leftToRight,
+              child: Home(userData: widget.userData),
+            ),
+          );
+        }
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("ถอนเงิน"),
+      content: Text("กรุณายืนยันเพื่อถอนเงินจำนวน 12000 บาท"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
@@ -63,21 +122,21 @@ class _WithdrawalState extends State<Withdrawal> {
                           tooltip: 'back',
                           onPressed: () {
                             Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRight,
-                              child: Home(
-                                userData: widget.userData,
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRight,
+                                child: Home(
+                                  userData: widget.userData,
+                                ),
                               ),
-                            ),
-                          );
+                            );
                             print('back');
                           },
                         ),
-                        Text(
-                          'ย้อนกลับ',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
+                        // Text(
+                        //   'ย้อนกลับ',
+                        //   style: TextStyle(fontSize: 20, color: Colors.white),
+                        // ),
                       ],
                     ),
                   ),
@@ -173,6 +232,7 @@ class _WithdrawalState extends State<Withdrawal> {
                                     child: Createbank(
                                       userData: widget.userData,
                                       namebank: "0",
+                                      engbank: "0",
                                     ),
                                   ),
                                 );
@@ -188,13 +248,14 @@ class _WithdrawalState extends State<Withdrawal> {
                           : GestureDetector(
                               onTap: () {
                                 print("YES");
-                                 Navigator.push(
+                                Navigator.push(
                                   context,
                                   PageTransition(
                                     type: PageTransitionType.rightToLeft,
                                     child: Createbank(
                                       userData: widget.userData,
                                       namebank: "0",
+                                      engbank: "0",
                                     ),
                                   ),
                                 );
@@ -230,8 +291,10 @@ class _WithdrawalState extends State<Withdrawal> {
                       GestureDetector(
                         onTap: () {
                           print("YES");
+                          showAlertDialog(context);
                         },
                         child: Container(
+                          // ignore: unnecessary_new
                           decoration: new BoxDecoration(
                               color: Color.fromARGB(255, 97, 222, 253),
                               // ignore: unnecessary_new
@@ -245,7 +308,7 @@ class _WithdrawalState extends State<Withdrawal> {
                           child: Center(
                             child: Text(
                               "ถอน",
-                              style: TextStyle(fontSize: 30),
+                              style: TextStyle(fontSize: 20),
                             ),
                           ),
                         ),

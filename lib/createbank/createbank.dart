@@ -1,13 +1,20 @@
+// ignore_for_file: prefer_const_constructors, must_be_immutable
+
 import 'package:easypayeasywash/selectbank/seleckbank.dart';
 import 'package:easypayeasywash/withdrawal/withdrawal.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Createbank extends StatefulWidget {
-  Createbank({Key? key, required this.userData, required this.namebank})
+  Createbank(
+      {Key? key,
+      required this.userData,
+      required this.namebank,
+      required this.engbank})
       : super(key: key);
   Map<String, dynamic>? userData;
   String namebank;
+  String engbank;
 
   @override
   State<Createbank> createState() => _CreatebankState();
@@ -86,17 +93,17 @@ class _CreatebankState extends State<Createbank> {
                             print('back');
                           },
                         ),
-                        Text(
-                          'ย้อนกลับ',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
+                        // Text(
+                        //   'ย้อนกลับ',
+                        //   style: TextStyle(fontSize: 20, color: Colors.white),
+                        // ),
                       ],
                     ),
                   ),
                   Center(
                     child: Text(
                       "บัญชีธนาคาร",
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
                 ],
@@ -207,12 +214,60 @@ class _CreatebankState extends State<Createbank> {
                                   child: Card(
                                     child: ListTile(
                                       leading:
-                                          Image.asset('assets/images/scb.png'),
-                                      title: Text('ธนาคารไทยพาณิชย์'),
+                                          Image.asset('assets/images/${widget.engbank}.png'),
+                                      title: Text(widget.namebank),
                                       // subtitle: Text('เครื่องหน้าหอ'),
                                     ),
                                   ),
                                 ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                label: Text("ชื่อบัญชี"),
+                                hintText: 'กรอกชื่อบัญชี',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                label: Text("เลขที่บัญชี"),
+                                hintText: 'กรอกเลขที่บัญชี',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                print("YES");
+                              },
+                              child: Container(
+                                // ignore: unnecessary_new
+                                decoration: new BoxDecoration(
+                                    color: Color.fromARGB(255, 97, 222, 253),
+                                    // ignore: unnecessary_new
+                                    borderRadius: new BorderRadius.only(
+                                        topLeft: const Radius.circular(48.0),
+                                        topRight: const Radius.circular(48.0),
+                                        bottomLeft: const Radius.circular(48.0),
+                                        bottomRight:
+                                            const Radius.circular(48.0))),
+                                width: width * 0.7,
+                                height: height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    "เพิ่มบัญชีธนาคาร",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
