@@ -1,20 +1,32 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:easypayeasywash/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:http/http.dart' as http;
 
 class WashingInfo extends StatefulWidget {
-  WashingInfo({Key? key,required this.userData ,required this.id}) : super(key: key);
-  String id;
-    Map<String, dynamic>? userData;
+  WashingInfo({Key? key, required this.userData, required this.washinginfo})
+      : super(key: key);
+  Map<String, dynamic>? userData, washinginfo;
 
   @override
   State<WashingInfo> createState() => _WashingInfoState();
 }
 
 class _WashingInfoState extends State<WashingInfo> {
+  TextEditingController? detail, price;
+  @override
+  void initState() {
+    super.initState();
+    detail =
+        new TextEditingController(text: '${widget.washinginfo!['detail']}');
+    price = new TextEditingController(text: '${widget.washinginfo!['price']}');
+  }
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -27,29 +39,40 @@ class _WashingInfoState extends State<WashingInfo> {
     Widget continueButton = FlatButton(
       child: Text("ยืนยัน"),
       onPressed: () async {
-   Navigator.pop(context);
-        ArtDialogResponse response = await ArtSweetAlert.show(
-            barrierDismissible: false,
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-              // showCancelBtn: true,
-              title: "ดำเนินการเสร็จสิ้น",
-              confirmButtonText: "OK",
-            ));
+        Navigator.pop(context);
+        var client = http.Client();
+        var response = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/washing/logout'),
+            body: {
+              'washingid': '${widget.washinginfo!['washingid']}',
+            });
+        client.close();
+        print(json.decode(response.body)['message']);
+        if (json.decode(response.body)['message'] == "success") {
+          ArtDialogResponse response = await ArtSweetAlert.show(
+              barrierDismissible: false,
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                // showCancelBtn: true,
+                title: "ดำเนินการเสร็จสิ้น",
+                confirmButtonText: "OK",
+              ));
 
-        if (response == null) {
-          return;
-        }
-
-        if (response.isTapConfirmButton) {
-          print(response.isTapConfirmButton);
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: Home(userData: widget.userData),
-            ),
-          );
+          if (response == null) {
+            return;
+          }
+          if (response.isTapConfirmButton) {
+            print(response.isTapConfirmButton);
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.leftToRight,
+                child: Home(
+                  userData: widget.userData,
+                ),
+              ),
+            );
+          }
         }
       },
     );
@@ -103,7 +126,15 @@ class _WashingInfoState extends State<WashingInfo> {
                           color: Colors.white,
                           tooltip: 'back',
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRight,
+                                child: Home(
+                                  userData: widget.userData,
+                                ),
+                              ),
+                            );
                             print('back');
                           },
                         ),
@@ -133,7 +164,7 @@ class _WashingInfoState extends State<WashingInfo> {
                   ),
                   Center(
                     child: Text(
-                      'ID : ${widget.id}',
+                      'ID : ${widget.washinginfo!['washingid']}',
                       style: TextStyle(
                         fontSize: 25,
                       ),
@@ -142,6 +173,7 @@ class _WashingInfoState extends State<WashingInfo> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: price,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         label: Text("ค่าบริการ"),
@@ -152,6 +184,7 @@ class _WashingInfoState extends State<WashingInfo> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: detail,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         label: Text("คำอธิบาย"),
@@ -165,23 +198,53 @@ class _WashingInfoState extends State<WashingInfo> {
                       GestureDetector(
                         onTap: () async {
                           print("YES");
-                          // showAlertDialog(context);
-                          ArtDialogResponse response = await ArtSweetAlert.show(
-                              barrierDismissible: false,
-                              context: context,
-                              artDialogArgs: ArtDialogArgs(
-                                // showCancelBtn: true,
-                                title: "ดำเนินการแก้ไขเสร็จสิ้น",
-                                confirmButtonText: "OK",
-                              ));
-                          if (response == null) {
-                            return;
-                          }
+                          print(price!.text);
+                          print(detail!.text);
+                          var client = http.Client();
+                          var response = await client.post(
+                              Uri.parse(
+                                  'https://server.easypayeasywash.tk/washing/update'),
+                              body: {
+                                'washingid':
+                                    '${widget.washinginfo!['washingid']}',
+                                "detail": "${detail!.text}",
+                                "price": "${price!.text}"
+                              });
+                          client.close();
+                          print(json.decode(response.body)['message']);
+                          if (json.decode(response.body)['message'] ==
+                              "success") {
+                            ArtDialogResponse response =
+                                await ArtSweetAlert.show(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                      // showCancelBtn: true,
+                                      title: "ดำเนินการเสร็จสิ้น",
+                                      confirmButtonText: "OK",
+                                    ));
 
-                          if (response.isTapConfirmButton) {
-                            print(response.isTapConfirmButton);
-                            Navigator.pop(context);
+                            if (response == null) {
+                              return;
+                            }
                           }
+                          // showAlertDialog(context);
+                          // ArtDialogResponse response = await ArtSweetAlert.show(
+                          //     barrierDismissible: false,
+                          //     context: context,
+                          //     artDialogArgs: ArtDialogArgs(
+                          //       // showCancelBtn: true,
+                          //       title: "ดำเนินการแก้ไขเสร็จสิ้น",
+                          //       confirmButtonText: "OK",
+                          //     ));
+                          // if (response == null) {
+                          //   return;
+                          // }
+
+                          // if (response.isTapConfirmButton) {
+                          //   print(response.isTapConfirmButton);
+                          //   Navigator.pop(context);
+                          // }
                         },
                         child: Container(
                           // ignore: unnecessary_new

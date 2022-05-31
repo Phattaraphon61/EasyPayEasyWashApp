@@ -1,11 +1,21 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors, unnecessary_new
 
+import 'dart:convert';
+
+import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:easypayeasywash/home/home.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:page_transition/page_transition.dart';
 
 class Addwashing extends StatefulWidget {
-  Addwashing({Key? key, required this.userData, required this.id})
+  Addwashing(
+      {Key? key,
+      required this.userInfo,
+      required this.id,
+      required this.userData})
       : super(key: key);
-  Map<String, dynamic>? userData;
+  Map<String, dynamic>? userInfo, userData;
   String id;
 
   @override
@@ -13,6 +23,14 @@ class Addwashing extends StatefulWidget {
 }
 
 class _AddwashingState extends State<Addwashing> {
+  final detail = TextEditingController();
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    detail.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -83,6 +101,7 @@ class _AddwashingState extends State<Addwashing> {
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: TextField(
+                          controller: detail,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'คำอธิบาย',
@@ -90,8 +109,48 @@ class _AddwashingState extends State<Addwashing> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          print("YES");
+                        onTap: () async {
+                          print("YES${detail.text}");
+                          var client = http.Client();
+                          var response = await client.post(
+                              Uri.parse(
+                                  'https://server.easypayeasywash.tk/washing/login'),
+                              body: {
+                                'washingid': '${widget.id}',
+                                'userid': '${widget.userInfo!['id']}',
+                                "detail": "${detail.text}"
+                              });
+                          client.close();
+                          print(json.decode(response.body)['message']);
+                          if (json.decode(response.body)['message'] ==
+                              "success") {
+                            ArtDialogResponse response =
+                                await ArtSweetAlert.show(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                      // showCancelBtn: true,
+                                      title: "ดำเนินการเสร็จสิ้น",
+                                      confirmButtonText: "OK",
+                                    ));
+
+                            if (response == null) {
+                              return;
+                            }
+
+                            if (response.isTapConfirmButton) {
+                              print(response.isTapConfirmButton);
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.leftToRight,
+                                  child: Home(
+                                    userData: widget.userData,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
                         },
                         child: Container(
                           decoration: new BoxDecoration(
