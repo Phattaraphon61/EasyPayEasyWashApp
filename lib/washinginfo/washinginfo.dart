@@ -173,6 +173,7 @@ class _WashingInfoState extends State<WashingInfo> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      keyboardType: TextInputType.number,
                       controller: price,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),

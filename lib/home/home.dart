@@ -388,7 +388,8 @@ class _HomeState extends State<Home> {
                                       type: PageTransitionType.rightToLeft,
                                       child: Withdrawal(
                                         userData: widget.userData,
-                                        bank: "0",
+                                        userInfo: userInfo,
+                                        bank: null,
                                       ),
                                     ),
                                   );

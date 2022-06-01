@@ -1,20 +1,22 @@
 // ignore_for_file: prefer_const_constructors, must_be_immutable
 
+import 'dart:convert';
+
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:easypayeasywash/selectbank/seleckbank.dart';
 import 'package:easypayeasywash/withdrawal/withdrawal.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:http/http.dart' as http;
 
 class Createbank extends StatefulWidget {
   Createbank(
       {Key? key,
       required this.userData,
-      required this.namebank,
-      required this.engbank})
+      required this.userInfo,
+      required this.bank})
       : super(key: key);
-  Map<String, dynamic>? userData;
-  String namebank;
-  String engbank;
+  Map<String, dynamic>? userData, userInfo, bank;
 
   @override
   State<Createbank> createState() => _CreatebankState();
@@ -22,6 +24,13 @@ class Createbank extends StatefulWidget {
 
 class _CreatebankState extends State<Createbank> {
   List<bool> isSelected = [true, false];
+  final name = TextEditingController();
+  final number = TextEditingController();
+  Map<String, dynamic> banks = {
+    'scb': 'ไทยพาณิชย์',
+    'kbank': 'กสิกรไทย',
+    'ktb': 'กรุงไทย'
+  };
   numtostar(num) {
     var tt = [];
     for (int i = 0; i < num.length; i++) {
@@ -40,7 +49,7 @@ class _CreatebankState extends State<Createbank> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.namebank != "0") {
+    if (widget.bank != null) {
       setState(() {
         isSelected[0] = false;
         isSelected[1] = true;
@@ -85,8 +94,9 @@ class _CreatebankState extends State<Createbank> {
                               PageTransition(
                                 type: PageTransitionType.leftToRight,
                                 child: Withdrawal(
+                                  userInfo: widget.userInfo,
                                   userData: widget.userData,
-                                  bank: '0',
+                                  bank: null,
                                 ),
                               ),
                             );
@@ -146,36 +156,41 @@ class _CreatebankState extends State<Createbank> {
               ),
               isSelected[0] == true
                   ? Column(children: [
-                      GestureDetector(
-                        onTap: () {
-                          print("YES");
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRight,
-                              child: Withdrawal(
-                                userData: widget.userData,
-                                bank: '1',
+                      for (var i in widget.userInfo!['bank']!)
+                        GestureDetector(
+                          onTap: () {
+                            print("YES");
+                            print(i);
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRight,
+                                child: Withdrawal(
+                                  userData: widget.userData,
+                                  userInfo: widget.userInfo,
+                                  bank: i,
+                                ),
                               ),
+                            );
+                          },
+                          child: Card(
+                            child: ListTile(
+                              leading:
+                                  Image.asset('assets/images/${i['bank']}.png'),
+                              title: Text(i['name']),
+                              subtitle: Text(
+                                  'ธนาคาร${banks![i['bank']].toString()} ' +
+                                      numtostar(i['number'])),
+                              trailing: Icon(Icons.navigate_next_rounded),
                             ),
-                          );
-                        },
-                        child: Card(
-                          child: ListTile(
-                            leading: Image.asset('assets/images/scb.png'),
-                            title: Text('นาย ภัทรพล ผิวเรือง'),
-                            subtitle: Text(
-                                'ธนาคารไทยพาณิชย์ ' + numtostar("4078580533")),
-                            trailing: Icon(Icons.navigate_next_rounded),
                           ),
                         ),
-                      ),
                     ])
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          widget.namebank == "0"
+                          widget.bank == null
                               ? GestureDetector(
                                   onTap: () {
                                     print("YES");
@@ -184,6 +199,7 @@ class _CreatebankState extends State<Createbank> {
                                       PageTransition(
                                         type: PageTransitionType.rightToLeft,
                                         child: Selectbank(
+                                          userInfo: widget.userInfo,
                                           userData: widget.userData,
                                         ),
                                       ),
@@ -207,15 +223,16 @@ class _CreatebankState extends State<Createbank> {
                                         type: PageTransitionType.rightToLeft,
                                         child: Selectbank(
                                           userData: widget.userData,
+                                          userInfo: widget.userInfo,
                                         ),
                                       ),
                                     );
                                   },
                                   child: Card(
                                     child: ListTile(
-                                      leading:
-                                          Image.asset('assets/images/${widget.engbank}.png'),
-                                      title: Text(widget.namebank),
+                                      leading: Image.asset(
+                                          'assets/images/${widget.bank!['engname']}.png'),
+                                      title: Text(widget.bank!['thname']),
                                       // subtitle: Text('เครื่องหน้าหอ'),
                                     ),
                                   ),
@@ -223,6 +240,8 @@ class _CreatebankState extends State<Createbank> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextField(
+                              controller: name,
+                              keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text("ชื่อบัญชี"),
@@ -233,6 +252,8 @@ class _CreatebankState extends State<Createbank> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextField(
+                              keyboardType: TextInputType.number,
+                              controller: number,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text("เลขที่บัญชี"),
@@ -243,8 +264,50 @@ class _CreatebankState extends State<Createbank> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 print("YES");
+                                var client = http.Client();
+                                var response = await client.post(
+                                    Uri.parse(
+                                        'https://server.easypayeasywash.tk/user/update'),
+                                    body: {
+                                      "type": "bank",
+                                      "fbid": "${widget.userInfo!['fbid']}",
+                                      "bank": "${widget.bank!['engname']}",
+                                      "number": "${number.text}",
+                                      "name": "${name.text}"
+                                    });
+                                client.close();
+                                print(json.decode(response.body)['data']);
+                                if (json.decode(response.body)['message'] ==
+                                    "success") {
+                                  ArtDialogResponse response =
+                                      await ArtSweetAlert.show(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          artDialogArgs: ArtDialogArgs(
+                                            // showCancelBtn: true,
+                                            title: "ดำเนินการเสร็จสิ้น",
+                                            confirmButtonText: "OK",
+                                          ));
+
+                                  if (response == null) {
+                                    return;
+                                  }
+
+                                  if (response.isTapConfirmButton) {
+                                    print(response.isTapConfirmButton);
+                                    isSelected[0] = true;
+                                    isSelected[1] = false;
+                                  }
+                                }
+                                setState(() {
+                                  widget.userInfo =
+                                      json.decode(response.body)['data'];
+                                      widget.bank = null;
+                                      name.text = "";
+                                      number.text = "";
+                                });
                               },
                               child: Container(
                                 // ignore: unnecessary_new

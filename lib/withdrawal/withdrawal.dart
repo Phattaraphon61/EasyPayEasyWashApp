@@ -8,16 +8,24 @@ import 'package:intl/intl.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 
 class Withdrawal extends StatefulWidget {
-  Withdrawal({Key? key, required this.userData, required this.bank})
+  Withdrawal(
+      {Key? key,
+      required this.userData,
+      required this.userInfo,
+      required this.bank})
       : super(key: key);
-  Map<String, dynamic>? userData;
-  String bank;
+  Map<String, dynamic>? userData, userInfo,bank;
 
   @override
   State<Withdrawal> createState() => _WithdrawalState();
 }
 
 class _WithdrawalState extends State<Withdrawal> {
+    Map<String, dynamic> banks = {
+    'scb': 'ไทยพาณิชย์',
+    'kbank': 'กสิกรไทย',
+    'ktb': 'กรุงไทย'
+  };
   numtostar(num) {
     var tt = [];
     for (int i = 0; i < num.length; i++) {
@@ -206,7 +214,7 @@ class _WithdrawalState extends State<Withdrawal> {
                             Padding(
                               padding: EdgeInsets.only(top: height * 0.01),
                               child: Text(
-                                NumberFormat("#,###").format(3000000000000),
+                                NumberFormat("#,###").format(widget.userInfo!['balance']),
                                 style: TextStyle(
                                   fontSize: 16,
                                 ),
@@ -221,7 +229,7 @@ class _WithdrawalState extends State<Withdrawal> {
                     padding: EdgeInsets.only(top: height * 0.45),
                     child: Column(children: [
                       Text("ถอนไปยัง"),
-                      widget.bank == "0"
+                      widget.bank == null
                           ? GestureDetector(
                               onTap: () {
                                 print("YES");
@@ -231,8 +239,8 @@ class _WithdrawalState extends State<Withdrawal> {
                                     type: PageTransitionType.rightToLeft,
                                     child: Createbank(
                                       userData: widget.userData,
-                                      namebank: "0",
-                                      engbank: "0",
+                                      userInfo: widget.userInfo,
+                                      bank: null,
                                     ),
                                   ),
                                 );
@@ -253,19 +261,18 @@ class _WithdrawalState extends State<Withdrawal> {
                                   PageTransition(
                                     type: PageTransitionType.rightToLeft,
                                     child: Createbank(
+                                      userInfo: widget.userInfo,
                                       userData: widget.userData,
-                                      namebank: "0",
-                                      engbank: "0",
+                                      bank: null,
                                     ),
                                   ),
                                 );
                               },
                               child: Card(
                                 child: ListTile(
-                                  leading: Image.asset('assets/images/scb.png'),
-                                  title: Text('นาย ภัทรพล ผิวเรือง'),
-                                  subtitle: Text('ธนาคารไทยพาณิชย์ ' +
-                                      numtostar("4078580533")),
+                                  leading: Image.asset('assets/images/${widget.bank!['bank']}.png'),
+                                  title: Text(widget.bank!['name']),
+                                  subtitle: Text('ธนาคาร${banks[widget.bank!['bank']].toString()} ' + numtostar(widget.bank!['number'])),
                                   trailing: Icon(Icons.navigate_next_rounded),
                                 ),
                               ),

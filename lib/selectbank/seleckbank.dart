@@ -5,14 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Selectbank extends StatefulWidget {
-  Selectbank({Key? key, required this.userData}) : super(key: key);
-  Map<String, dynamic>? userData;
+  Selectbank({Key? key, required this.userData, required this.userInfo})
+      : super(key: key);
+  Map<String, dynamic>? userData, userInfo;
 
   @override
   State<Selectbank> createState() => _SelectbankState();
 }
 
 class _SelectbankState extends State<Selectbank> {
+  List<dynamic>? banks = [
+    {'engname': 'scb', 'thname': 'ไทยพาณิชย์'},
+    {'engname': 'kbank', 'thname': 'กสิกรไทย'},
+    {'engname': 'ktb', 'thname': 'กรุงไทย'}
+  ];
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -46,16 +52,16 @@ class _SelectbankState extends State<Selectbank> {
                           tooltip: 'back',
                           onPressed: () {
                             Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRight,
-                              child: Createbank(
-                                userData: widget.userData,
-                                namebank: '0',
-                                engbank: "0",
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRight,
+                                child: Createbank(
+                                  userData: widget.userData,
+                                  userInfo: widget.userInfo,
+                                  bank: null,
+                                ),
                               ),
-                            ),
-                          );
+                            );
                             print('back');
                           },
                         ),
@@ -76,83 +82,33 @@ class _SelectbankState extends State<Selectbank> {
               ),
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: GestureDetector(
-                      onTap: () {
-                        print("YES");
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.leftToRight,
-                            child: Createbank(
-                              userData: widget.userData,
-                              engbank: "scb",
-                              namebank: "ธนาคารไทยพาณิชย์",
+                  for (var i in banks!)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: GestureDetector(
+                        onTap: () {
+                          print("YES");
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.leftToRight,
+                              child: Createbank(
+                                  userData: widget.userData,
+                                  userInfo: widget.userInfo,
+                                  bank: i),
                             ),
+                          );
+                        },
+                        child: Card(
+                          child: ListTile(
+                            leading: Image.asset(
+                                'assets/images/${i['engname']}.png'),
+                            title: Text('ธนาคาร' + i['thname']),
+                            // subtitle: Text('เครื่องหน้าหอ'),
                           ),
-                        );
-                      },
-                      child: Card(
-                        child: ListTile(
-                          leading: Image.asset('assets/images/scb.png'),
-                          title: Text('ธนาคารไทยพาณิชย์'),
-                          // subtitle: Text('เครื่องหน้าหอ'),
                         ),
                       ),
                     ),
-                  ),
-                   Padding(
-                    padding: const EdgeInsets.only(top: 1),
-                    child: GestureDetector(
-                      onTap: () {
-                        print("YES");
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.leftToRight,
-                            child: Createbank(
-                              userData: widget.userData,
-                              engbank: "kbank",
-                              namebank: "ธนาคารกสิกรไทย",
-                            ),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        child: ListTile(
-                          leading: Image.asset('assets/images/kbank.png'),
-                          title: Text('ธนาคารกสิกรไทย'),
-                          // subtitle: Text('เครื่องหน้าหอ'),
-                        ),
-                      ),
-                    ),
-                  ), Padding(
-                    padding: const EdgeInsets.only(top: 1),
-                    child: GestureDetector(
-                      onTap: () {
-                        print("YES");
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.leftToRight,
-                            child: Createbank(
-                              userData: widget.userData,
-                              engbank: "ktb",
-                              namebank: "ธนาคารกรุงไทย",
-                            ),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        child: ListTile(
-                          leading: Image.asset('assets/images/ktb.png'),
-                          title: Text('ธนาคารกรุงไทย'),
-                          // subtitle: Text('เครื่องหน้าหอ'),
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ],
