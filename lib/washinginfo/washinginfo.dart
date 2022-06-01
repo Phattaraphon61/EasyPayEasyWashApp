@@ -67,9 +67,7 @@ class _WashingInfoState extends State<WashingInfo> {
               context,
               PageTransition(
                 type: PageTransitionType.leftToRight,
-                child: Home(
-                  userData: widget.userData,
-                ),
+                child: Home(),
               ),
             );
           }
@@ -130,9 +128,7 @@ class _WashingInfoState extends State<WashingInfo> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.leftToRight,
-                                child: Home(
-                                  userData: widget.userData,
-                                ),
+                                child: Home(),
                               ),
                             );
                             print('back');

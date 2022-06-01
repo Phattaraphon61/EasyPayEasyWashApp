@@ -26,7 +26,7 @@ class _MenuState extends State<Menu> {
       body:
           // nameclass == "login"? Login_Page():
           nameclass == "หน้าหลัก"
-              ? Home(userData: widget.userData)
+              ? Home()
               : const Login(),
       // : nameclass == "ประวัติการรักษา"
       //     ? History_Page(uid: uiduser)

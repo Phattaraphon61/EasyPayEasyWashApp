@@ -17,14 +17,13 @@ import 'package:page_transition/page_transition.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
-  Home({Key? key, required this.userData}) : super(key: key);
-  Map<String, dynamic>? userData;
+  Home({Key? key}) : super(key: key);
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  Map<String, dynamic>? userInfo;
+  Map<String, dynamic>? userInfo, userDatas;
   List<dynamic>? mywashing;
   String _scanBarcode = 'Unknown';
   Future<void> scanQR() async {
@@ -35,13 +34,13 @@ class _HomeState extends State<Home> {
           '#ff6666', 'Cancel', true, ScanMode.QR);
       print(barcodeScanRes);
       if (barcodeScanRes != "-1") {
-          Navigator.push(
+        Navigator.push(
           context,
           PageTransition(
             type: PageTransitionType.leftToRight,
             child: Addwashing(
               userInfo: userInfo,
-              userData: widget.userData,
+              userData: userDatas,
               id: barcodeScanRes,
             ),
           ),
@@ -102,6 +101,14 @@ class _HomeState extends State<Home> {
   }
 
   Future<bool> loaddata() async {
+    if (userDatas == null) {
+      var userData = await FacebookAuth.i.getUserData(
+        fields: "name,email,picture.width(200)",
+      );
+      setState(() {
+        userDatas = userData;
+      });
+    }
     print("MYINFO$userInfo");
     print("MYWASHING$mywashing");
     if (userInfo == null) {
@@ -109,8 +116,8 @@ class _HomeState extends State<Home> {
       var response = await client.post(
           Uri.parse('https://server.easypayeasywash.tk/user/create'),
           body: {
-            'name': '${widget.userData!['name']}',
-            'fbid': '${widget.userData!['id']}'
+            'name': '${userDatas!['name']}',
+            'fbid': '${userDatas!['id']}'
           });
       var responsewashing = await client.post(
           Uri.parse('https://server.easypayeasywash.tk/washing/getmywashing'),
@@ -121,6 +128,7 @@ class _HomeState extends State<Home> {
       setState(() {
         mywashing = json.decode(responsewashing.body)['data'];
         userInfo = json.decode(response.body)['data'];
+        userInfo!['image'] = userDatas!['picture']['data']['url'];
       });
     }
     return true;
@@ -172,7 +180,7 @@ class _HomeState extends State<Home> {
                                     PageTransition(
                                       type: PageTransitionType.rightToLeft,
                                       child: MyNoti(
-                                        userData: widget.userData,
+                                        userData: userDatas,
                                       ),
                                     ),
                                   );
@@ -212,13 +220,13 @@ class _HomeState extends State<Home> {
                             children: [
                               ClipOval(
                                   child: Image.network(
-                                widget.userData!['picture']['data']['url'],
+                                userDatas!['picture']['data']['url'],
                                 fit: BoxFit.contain,
                                 matchTextDirection: true,
                                 height: height * 0.13,
                               )),
                               Text(
-                                widget.userData!['name'],
+                                userDatas!['name'],
                                 style: TextStyle(
                                   fontSize: 18,
                                 ),
@@ -304,7 +312,7 @@ class _HomeState extends State<Home> {
                                         PageTransition(
                                           type: PageTransitionType.rightToLeft,
                                           child: WashingInfo(
-                                            userData: widget.userData,
+                                            userData: userDatas,
                                             washinginfo: i,
                                           ),
                                         ),
@@ -357,7 +365,7 @@ class _HomeState extends State<Home> {
                                     PageTransition(
                                       type: PageTransitionType.rightToLeft,
                                       child: History(
-                                        userData: widget.userData,
+                                        userData: userDatas,
                                       ),
                                     ),
                                   );
@@ -387,7 +395,6 @@ class _HomeState extends State<Home> {
                                     PageTransition(
                                       type: PageTransitionType.rightToLeft,
                                       child: Withdrawal(
-                                        userData: widget.userData,
                                         userInfo: userInfo,
                                         bank: null,
                                       ),

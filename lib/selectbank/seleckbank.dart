@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Selectbank extends StatefulWidget {
-  Selectbank({Key? key, required this.userData, required this.userInfo})
+  Selectbank({Key? key, required this.userInfo})
       : super(key: key);
-  Map<String, dynamic>? userData, userInfo;
+  Map<String, dynamic>? userInfo;
 
   @override
   State<Selectbank> createState() => _SelectbankState();
@@ -56,7 +56,6 @@ class _SelectbankState extends State<Selectbank> {
                               PageTransition(
                                 type: PageTransitionType.leftToRight,
                                 child: Createbank(
-                                  userData: widget.userData,
                                   userInfo: widget.userInfo,
                                   bank: null,
                                 ),
@@ -93,7 +92,6 @@ class _SelectbankState extends State<Selectbank> {
                             PageTransition(
                               type: PageTransitionType.leftToRight,
                               child: Createbank(
-                                  userData: widget.userData,
                                   userInfo: widget.userInfo,
                                   bank: i),
                             ),

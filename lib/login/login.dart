@@ -18,13 +18,8 @@ class _LoginState extends State<Login> {
     );
     if (result.status == LoginStatus.success) {
       final AccessToken accessToken = result.accessToken!;
-      var userData = await FacebookAuth.i.getUserData(
-        fields: "name,email,picture.width(200)",
-      );
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home(userData: userData)),
-          (route) => false);
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => Home()), (route) => false);
     } else {
       print(result.status);
       print(result.message);

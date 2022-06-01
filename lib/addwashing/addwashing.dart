@@ -144,9 +144,7 @@ class _AddwashingState extends State<Addwashing> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.leftToRight,
-                                  child: Home(
-                                    userData: widget.userData,
-                                  ),
+                                  child: Home(),
                                 ),
                               );
                             }

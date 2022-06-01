@@ -8,20 +8,16 @@ import 'package:intl/intl.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 
 class Withdrawal extends StatefulWidget {
-  Withdrawal(
-      {Key? key,
-      required this.userData,
-      required this.userInfo,
-      required this.bank})
+  Withdrawal({Key? key, required this.userInfo, required this.bank})
       : super(key: key);
-  Map<String, dynamic>? userData, userInfo,bank;
+  Map<String, dynamic>? userInfo, bank;
 
   @override
   State<Withdrawal> createState() => _WithdrawalState();
 }
 
 class _WithdrawalState extends State<Withdrawal> {
-    Map<String, dynamic> banks = {
+  Map<String, dynamic> banks = {
     'scb': 'ไทยพาณิชย์',
     'kbank': 'กสิกรไทย',
     'ktb': 'กรุงไทย'
@@ -72,7 +68,7 @@ class _WithdrawalState extends State<Withdrawal> {
             context,
             PageTransition(
               type: PageTransitionType.leftToRight,
-              child: Home(userData: widget.userData),
+              child: Home(),
             ),
           );
         }
@@ -133,9 +129,7 @@ class _WithdrawalState extends State<Withdrawal> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.leftToRight,
-                                child: Home(
-                                  userData: widget.userData,
-                                ),
+                                child: Home(),
                               ),
                             );
                             print('back');
@@ -183,13 +177,13 @@ class _WithdrawalState extends State<Withdrawal> {
                         children: [
                           ClipOval(
                               child: Image.network(
-                            widget.userData!['picture']['data']['url'],
+                            widget.userInfo!['image'],
                             fit: BoxFit.contain,
                             matchTextDirection: true,
                             height: height * 0.13,
                           )),
                           Text(
-                            widget.userData!['name'],
+                            widget.userInfo!['name'],
                             style: TextStyle(
                               fontSize: 18,
                             ),
@@ -214,7 +208,8 @@ class _WithdrawalState extends State<Withdrawal> {
                             Padding(
                               padding: EdgeInsets.only(top: height * 0.01),
                               child: Text(
-                                NumberFormat("#,###").format(widget.userInfo!['balance']),
+                                NumberFormat("#,###")
+                                    .format(widget.userInfo!['balance']),
                                 style: TextStyle(
                                   fontSize: 16,
                                 ),
@@ -238,7 +233,6 @@ class _WithdrawalState extends State<Withdrawal> {
                                   PageTransition(
                                     type: PageTransitionType.rightToLeft,
                                     child: Createbank(
-                                      userData: widget.userData,
                                       userInfo: widget.userInfo,
                                       bank: null,
                                     ),
@@ -262,7 +256,6 @@ class _WithdrawalState extends State<Withdrawal> {
                                     type: PageTransitionType.rightToLeft,
                                     child: Createbank(
                                       userInfo: widget.userInfo,
-                                      userData: widget.userData,
                                       bank: null,
                                     ),
                                   ),
@@ -270,9 +263,12 @@ class _WithdrawalState extends State<Withdrawal> {
                               },
                               child: Card(
                                 child: ListTile(
-                                  leading: Image.asset('assets/images/${widget.bank!['bank']}.png'),
+                                  leading: Image.asset(
+                                      'assets/images/${widget.bank!['bank']}.png'),
                                   title: Text(widget.bank!['name']),
-                                  subtitle: Text('ธนาคาร${banks[widget.bank!['bank']].toString()} ' + numtostar(widget.bank!['number'])),
+                                  subtitle: Text(
+                                      'ธนาคาร${banks[widget.bank!['bank']].toString()} ' +
+                                          numtostar(widget.bank!['number'])),
                                   trailing: Icon(Icons.navigate_next_rounded),
                                 ),
                               ),

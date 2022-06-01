@@ -12,11 +12,10 @@ import 'package:http/http.dart' as http;
 class Createbank extends StatefulWidget {
   Createbank(
       {Key? key,
-      required this.userData,
       required this.userInfo,
       required this.bank})
       : super(key: key);
-  Map<String, dynamic>? userData, userInfo, bank;
+  Map<String, dynamic>? userInfo, bank;
 
   @override
   State<Createbank> createState() => _CreatebankState();
@@ -95,7 +94,6 @@ class _CreatebankState extends State<Createbank> {
                                 type: PageTransitionType.leftToRight,
                                 child: Withdrawal(
                                   userInfo: widget.userInfo,
-                                  userData: widget.userData,
                                   bank: null,
                                 ),
                               ),
@@ -166,7 +164,6 @@ class _CreatebankState extends State<Createbank> {
                               PageTransition(
                                 type: PageTransitionType.leftToRight,
                                 child: Withdrawal(
-                                  userData: widget.userData,
                                   userInfo: widget.userInfo,
                                   bank: i,
                                 ),
@@ -200,7 +197,6 @@ class _CreatebankState extends State<Createbank> {
                                         type: PageTransitionType.rightToLeft,
                                         child: Selectbank(
                                           userInfo: widget.userInfo,
-                                          userData: widget.userData,
                                         ),
                                       ),
                                     );
@@ -222,7 +218,6 @@ class _CreatebankState extends State<Createbank> {
                                       PageTransition(
                                         type: PageTransitionType.rightToLeft,
                                         child: Selectbank(
-                                          userData: widget.userData,
                                           userInfo: widget.userInfo,
                                         ),
                                       ),
