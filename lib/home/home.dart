@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, avoid_print, prefer_const_constructors,
+// ignore_for_file: must_be_immutable, avoid_print
 
 import 'dart:convert';
 
@@ -8,10 +8,9 @@ import 'package:easypayeasywash/login/login.dart';
 import 'package:easypayeasywash/noti/notification.dart';
 import 'package:easypayeasywash/washinginfo/washinginfo.dart';
 import 'package:easypayeasywash/withdrawal/withdrawal.dart';
-import 'package:flutter/services.dart';
-// import 'package:qrscan/qrscan.dart' as scanner;
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -20,7 +19,6 @@ import 'package:http/http.dart' as http;
 class Home extends StatefulWidget {
   Home({Key? key, required this.userData}) : super(key: key);
   Map<String, dynamic>? userData;
-
   @override
   State<Home> createState() => _HomeState();
 }
@@ -37,7 +35,7 @@ class _HomeState extends State<Home> {
           '#ff6666', 'Cancel', true, ScanMode.QR);
       print(barcodeScanRes);
       if (barcodeScanRes != "-1") {
-        Navigator.push(
+          Navigator.push(
           context,
           PageTransition(
             type: PageTransitionType.leftToRight,
@@ -143,17 +141,13 @@ class _HomeState extends State<Home> {
                 children: [
                   Stack(
                     children: [
-                      Positioned(
-                        child: Container(
-                          // ignore: unnecessary_new
-                          decoration: new BoxDecoration(
-                              color: Color.fromRGBO(84, 199, 199, 1),
-                              // ignore: unnecessary_new
-                              borderRadius: new BorderRadius.only(
-                                  bottomLeft: const Radius.circular(48.0),
-                                  bottomRight: const Radius.circular(48.0))),
-                          height: height * 0.3,
-                        ),
+                      Container(
+                        decoration: new BoxDecoration(
+                            color: Color.fromRGBO(84, 199, 199, 1),
+                            borderRadius: new BorderRadius.only(
+                                bottomLeft: const Radius.circular(48.0),
+                                bottomRight: const Radius.circular(48.0))),
+                        height: height * 0.3,
                       ),
                       Positioned(
                         child: Row(
@@ -168,42 +162,23 @@ class _HomeState extends State<Home> {
                               },
                             ),
                             IconButton(
-                              icon: const Icon(Icons.notification_important),
-                              iconSize: 30,
-                              tooltip: 'scan',
-                              onPressed: () {
-                                print('noti');
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.rightToLeft,
-                                    child: MyNoti(userData: widget.userData),
-                                  ),
-                                );
-                              },
-                            ),
+                                icon: const Icon(Icons.notification_important),
+                                iconSize: 30,
+                                tooltip: 'scan',
+                                onPressed: () {
+                                  print('noti');
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.rightToLeft,
+                                      child: MyNoti(
+                                        userData: widget.userData,
+                                      ),
+                                    ),
+                                  );
+                                }),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Positioned(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  right: width * 0.04, top: height * 0.013),
-                              child: Container(
-                                // ignore: unnecessary_new
-                                decoration: new BoxDecoration(
-                                    color: Color.fromARGB(255, 231, 26, 26),
-                                    // ignore: unnecessary_new
-                                    shape: BoxShape.circle),
-                                height: 8,
-                                width: 8,
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                       Center(
                         child: Text(
@@ -217,13 +192,10 @@ class _HomeState extends State<Home> {
                           child: Container(
                               width: width * 0.8,
                               height: height * 0.2,
-                              // ignore: unnecessary_new
                               decoration: new BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
-                                      // ignore: unnecessary_new
                                       new BorderRadius.all(Radius.circular(23)),
-                                  // ignore: prefer_const_literals_to_create_immutables
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black54,
@@ -354,116 +326,111 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  Stack(
-                    children: [
-                      Container(
-                        // ignore: unnecessary_new
-                        decoration: new BoxDecoration(
-                            color: Color.fromRGBO(84, 199, 199, 1),
-                            // ignore: unnecessary_new
-                            borderRadius: new BorderRadius.only(
-                                topLeft: const Radius.circular(15.0),
-                                topRight: const Radius.circular(15.0))),
-                        height: height * 0.08,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Positioned(
-                              child: Column(
-                            children: [
-                              SizedBox(
-                                height: height * 0.05,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0.0),
-                                  icon:
-                                      Image.asset('assets/images/history.png'),
-                                  onPressed: () {
-                                    print("history");
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType.rightToLeft,
-                                        child: History(
-                                          userData: widget.userData,
-                                        ),
+                  Container(
+                    height: height * 0.08,
+                    decoration: new BoxDecoration(
+                        color: Color.fromRGBO(84, 199, 199, 1),
+                        borderRadius: new BorderRadius.only(
+                            topLeft: const Radius.circular(20),
+                            topRight: const Radius.circular(20)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black54,
+                            blurRadius: 10,
+                            offset: Offset(1, 8),
+                          )
+                        ]),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: height * 0.05,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0.0),
+                                icon: Image.asset('assets/images/history.png'),
+                                onPressed: () {
+                                  print("history");
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.rightToLeft,
+                                      child: History(
+                                        userData: widget.userData,
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
-                                "ประวัติการถอน",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              )
-                            ],
-                          )),
-                          Positioned(
-                              child: Column(
-                            children: [
-                              SizedBox(
-                                height: height * 0.05,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0.0),
-                                  icon: Image.asset(
-                                      'assets/images/withdrawal.png'),
-                                  onPressed: () {
-                                    print("withdrawal");
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType.rightToLeft,
-                                        child: Withdrawal(
-                                          userData: widget.userData,
-                                          bank: "0",
-                                        ),
+                            ),
+                            Text(
+                              "ประวัติการถอน",
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: height * 0.05,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0.0),
+                                icon:
+                                    Image.asset('assets/images/withdrawal.png'),
+                                onPressed: () {
+                                  print("withdrawal");
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.rightToLeft,
+                                      child: Withdrawal(
+                                        userData: widget.userData,
+                                        bank: "0",
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
-                                "ถอน",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              )
-                            ],
-                          )),
-                          Positioned(
-                              child: Column(
-                            children: [
-                              SizedBox(
-                                height: height * 0.05,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0.0),
-                                  icon:
-                                      Image.asset('assets/images/signout.png'),
-                                  onPressed: () async {
-                                    print('signout');
-                                    showAlertDialog(context);
-                                  },
-                                ),
+                            ),
+                            Text(
+                              "ถอน",
+                              style: TextStyle(
+                                fontSize: 14,
                               ),
-                              Text(
-                                "ออกจากระบบ",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              )
-                            ],
-                          )),
-                        ],
-                      )
-                    ],
-                  ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: height * 0.05,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0.0),
+                                icon: Image.asset('assets/images/signout.png'),
+                                onPressed: () async {
+                                  print('signout');
+                                  showAlertDialog(context);
+                                },
+                              ),
+                            ),
+                            Text(
+                              "ออกจากระบบ",
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
           );
-          ;
         } else {
           return Center(
             child: CircularProgressIndicator(),

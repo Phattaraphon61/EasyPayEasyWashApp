@@ -45,15 +45,7 @@ class _MyNotiState extends State<MyNoti> {
                           color: Colors.white,
                           tooltip: 'back',
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRight,
-                                child: Home(
-                                  userData: widget.userData,
-                                ),
-                              ),
-                            );
+                            Navigator.pop(context);
                             print('back');
                           },
                         ),
@@ -82,7 +74,8 @@ class _MyNotiState extends State<MyNoti> {
                       subtitle: Text('2022-05-20 21:55:09'),
                       isThreeLine: true,
                     ),
-                  ),Card(
+                  ),
+                  Card(
                     child: ListTile(
                       leading: Icon(Icons.notifications_active),
                       title: Text('ถอนเงินจำนวน1000บาทสำเร็จ'),

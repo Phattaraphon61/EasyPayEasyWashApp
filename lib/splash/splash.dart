@@ -2,6 +2,7 @@
 
 import 'package:easypayeasywash/home/home.dart';
 import 'package:easypayeasywash/login/login.dart';
+import 'package:easypayeasywash/menu/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';

@@ -43,15 +43,7 @@ class _HistoryState extends State<History> {
                           color: Colors.white,
                           tooltip: 'back',
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRight,
-                                child: Home(
-                                  userData: widget.userData,
-                                ),
-                              ),
-                            );
+                            Navigator.pop(context);
                             print('back');
                           },
                         ),
