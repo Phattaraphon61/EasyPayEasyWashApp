@@ -176,7 +176,7 @@ class _CreatebankState extends State<Createbank> {
                                   Image.asset('assets/images/${i['bank']}.png'),
                               title: Text(i['name']),
                               subtitle: Text(
-                                  'ธนาคาร${banks![i['bank']].toString()} ' +
+                                  'ธนาคาร${banks[i['bank']]} ' +
                                       numtostar(i['number'])),
                               trailing: Icon(Icons.navigate_next_rounded),
                             ),
@@ -297,8 +297,7 @@ class _CreatebankState extends State<Createbank> {
                                   }
                                 }
                                 setState(() {
-                                  widget.userInfo =
-                                      json.decode(response.body)['data'];
+                                  widget.userInfo!['bank'] = json.decode(response.body)['data']['bank'];
                                       widget.bank = null;
                                       name.text = "";
                                       number.text = "";

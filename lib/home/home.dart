@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:easypayeasywash/addwashing/addwashing.dart';
@@ -100,7 +101,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<bool> loaddata() async {
+  getdata() async {
     if (userDatas == null) {
       var userData = await FacebookAuth.i.getUserData(
         fields: "name,email,picture.width(200)",
@@ -108,30 +109,65 @@ class _HomeState extends State<Home> {
       setState(() {
         userDatas = userData;
       });
+      print("MYINFO$userInfo");
+      print("MYWASHING$mywashing");
+      if (userInfo == null) {
+        var client = http.Client();
+        var response = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/user/create'),
+            body: {
+              'name': '${userDatas!['name']}',
+              'fbid': '${userDatas!['id']}'
+            });
+        var responsewashing = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/washing/getmywashing'),
+            body: {'userid': '${json.decode(response.body)['data']['id']}'});
+        client.close();
+        print(json.decode(response.body)['data']);
+        print(json.decode(responsewashing.body)['data']);
+        setState(() {
+          mywashing = json.decode(responsewashing.body)['data'];
+          userInfo = json.decode(response.body)['data'];
+          userInfo!['image'] = userDatas!['picture']['data']['url'];
+        });
+      }
     }
-    print("MYINFO$userInfo");
-    print("MYWASHING$mywashing");
-    if (userInfo == null) {
-      var client = http.Client();
-      var response = await client.post(
-          Uri.parse('https://server.easypayeasywash.tk/user/create'),
-          body: {
-            'name': '${userDatas!['name']}',
-            'fbid': '${userDatas!['id']}'
-          });
-      var responsewashing = await client.post(
-          Uri.parse('https://server.easypayeasywash.tk/washing/getmywashing'),
-          body: {'userid': '${json.decode(response.body)['data']['id']}'});
+  }
+
+  Future<bool> loaddata() async {
+    var client = http.Client();
+    try {
+      if (userDatas == null) {
+        var userData = await FacebookAuth.i.getUserData(
+          fields: "name,email,picture.width(200)",
+        );
+        setState(() {
+          userDatas = userData;
+        });
+        print("MYINFO$userInfo");
+        print("MYWASHING$mywashing");
+        var client = http.Client();
+        var response = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/user/create'),
+            body: {
+              'name': '${userDatas!['name']}',
+              'fbid': '${userDatas!['id']}'
+            });
+        var responsewashing = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/washing/getmywashing'),
+            body: {'userid': '${json.decode(response.body)['data']['id']}'});
+        print(json.decode(response.body)['data']);
+        print(json.decode(responsewashing.body)['data']);
+        setState(() {
+          mywashing = json.decode(responsewashing.body)['data'];
+          userInfo = json.decode(response.body)['data'];
+          userInfo!['image'] = userDatas!['picture']['data']['url'];
+        });
+      }
+    } finally {
       client.close();
-      print(json.decode(response.body)['data']);
-      print(json.decode(responsewashing.body)['data']);
-      setState(() {
-        mywashing = json.decode(responsewashing.body)['data'];
-        userInfo = json.decode(response.body)['data'];
-        userInfo!['image'] = userDatas!['picture']['data']['url'];
-      });
+      return true;
     }
-    return true;
   }
 
   @override
@@ -140,8 +176,8 @@ class _HomeState extends State<Home> {
     double height = MediaQuery.of(context).size.height;
     return FutureBuilder(
       future: loaddata(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
+      builder: (c, s) {
+        if (userDatas != null && userInfo != null) {
           return SafeArea(
             child: Scaffold(
               body: Column(
@@ -289,7 +325,7 @@ class _HomeState extends State<Home> {
                         padding: EdgeInsets.only(top: height * 0.4),
                         child: Center(
                           child: Text(
-                            "เครื่องซักผ้าทั้งหมด",
+                            "เครื่องซักผ้าทั้งหมด (${mywashing!.length})",
                             style: TextStyle(
                               fontSize: 20,
                             ),
@@ -365,7 +401,7 @@ class _HomeState extends State<Home> {
                                     PageTransition(
                                       type: PageTransitionType.rightToLeft,
                                       child: History(
-                                        userData: userDatas,
+                                        userInfo: userInfo,
                                       ),
                                     ),
                                   );

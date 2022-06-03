@@ -1,4 +1,6 @@
-// ignore_for_file: prefer_const_constructors, must_be_immutable
+// ignore_for_file: prefer_const_constructors, must_be_immutable, deprecated_member_use
+
+import 'dart:convert';
 
 import 'package:easypayeasywash/createbank/createbank.dart';
 import 'package:easypayeasywash/home/home.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:intl/intl.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:http/http.dart' as http;
 
 class Withdrawal extends StatefulWidget {
   Withdrawal({Key? key, required this.userInfo, required this.bank})
@@ -17,6 +20,8 @@ class Withdrawal extends StatefulWidget {
 }
 
 class _WithdrawalState extends State<Withdrawal> {
+  final amount = TextEditingController();
+  bool check = false;
   Map<String, dynamic> banks = {
     'scb': 'ไทยพาณิชย์',
     'kbank': 'กสิกรไทย',
@@ -48,36 +53,49 @@ class _WithdrawalState extends State<Withdrawal> {
     Widget continueButton = FlatButton(
       child: Text("ยืนยัน"),
       onPressed: () async {
+        print('kkkk');
         Navigator.pop(context);
-        ArtDialogResponse response = await ArtSweetAlert.show(
-            barrierDismissible: false,
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-              // showCancelBtn: true,
-              title: "ดำเนินการเสร็จสิ้น รอระบบดำเนินการ",
-              confirmButtonText: "OK",
-            ));
+        var client = http.Client();
+        var response = await client.post(
+            Uri.parse('https://server.easypayeasywash.tk/withdraw/create'),
+            body: {
+              "userid": "${widget.userInfo!['id']}",
+              "bank":
+                  '{"bank":"${widget.bank!['bank']}","number": "${widget.bank!['number']}","name": "${widget.bank!['name']}"}',
+              "amount": '${amount.text}'
+            });
+        client.close();
+        print(json.decode(response.body)['message']);
+        if (json.decode(response.body)['message'] == "success") {
+          ArtDialogResponse response = await ArtSweetAlert.show(
+              barrierDismissible: false,
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                // showCancelBtn: true,
+                title: "ดำเนินการเสร็จสิ้น รอระบบดำเนินการ",
+                confirmButtonText: "OK",
+              ));
 
-        if (response == null) {
-          return;
-        }
-
-        if (response.isTapConfirmButton) {
-          print(response.isTapConfirmButton);
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: Home(),
-            ),
-          );
+          if (response == null) {
+            return;
+          }
+          if (response.isTapConfirmButton) {
+            print(response.isTapConfirmButton);
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.leftToRight,
+                child: Home(),
+              ),
+            );
+          }
         }
       },
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("ถอนเงิน"),
-      content: Text("กรุณายืนยันเพื่อถอนเงินจำนวน 12000 บาท"),
+      content: Text("กรุณายืนยันเพื่อถอนเงินจำนวน ${amount.text} บาท"),
       actions: [
         cancelButton,
         continueButton,
@@ -278,7 +296,20 @@ class _WithdrawalState extends State<Withdrawal> {
                         padding: const EdgeInsets.all(10),
                         child: TextField(
                           keyboardType: TextInputType.number,
+                          controller: amount,
+                          onChanged: (text) {
+                            if (int.parse(text) > widget.userInfo!['balance']) {
+                              setState(() {
+                                check = true;
+                              });
+                            } else {
+                              setState(() {
+                                check = false;
+                              });
+                            }
+                          },
                           decoration: InputDecoration(
+                            errorText: check ? "ยอดเงินของคุณไม่เพียงพอ" : null,
                             border: OutlineInputBorder(),
                             suffixIcon: Padding(
                               padding: const EdgeInsets.only(top: 12),
@@ -293,8 +324,23 @@ class _WithdrawalState extends State<Withdrawal> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          print(widget.userInfo!['balance']);
+                          print(amount.text);
+                          if (int.parse(amount.text) <=
+                              widget.userInfo!['balance']) {
+                            if (widget.bank != null) {
+                              print("YYYYYYYYYY");
+                              showAlertDialog(context);
+                            } else {
+                              ArtSweetAlert.show(
+                                  context: context,
+                                  artDialogArgs: ArtDialogArgs(
+                                      type: ArtSweetAlertType.danger,
+                                      title: "เลือกบัญชีธนาคาร",));
+                            }
+                          }
                           print("YES");
-                          showAlertDialog(context);
+                          //  showAlertDialog(context);
                         },
                         child: Container(
                           // ignore: unnecessary_new
