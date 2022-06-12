@@ -202,6 +202,7 @@ class _WashingInfoState extends State<WashingInfo> {
                               Uri.parse(
                                   'https://server.easypayeasywash.tk/washing/update'),
                               body: {
+                                'type':'edit',
                                 'washingid':
                                     '${widget.washinginfo!['washingid']}',
                                 "detail": "${detail!.text}",
